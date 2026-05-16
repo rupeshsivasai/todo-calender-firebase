@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import Logo from "../Logo";
 
 export default function Navbar() {
   const { currentUser, logout } = useAuth();
@@ -18,9 +19,7 @@ export default function Navbar() {
   return (
     <nav className="bg-white border-b border-gray-100 px-4 sm:px-8 py-3 flex items-center justify-between shadow-sm sticky top-0 z-50">
       <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-          <span className="text-white text-sm font-bold">✓</span>
-        </div>
+        <Logo size={32} />
         <h1 className="text-lg font-bold text-gray-900 tracking-tight">
           Todo <span className="text-indigo-600">Calendar</span>
         </h1>

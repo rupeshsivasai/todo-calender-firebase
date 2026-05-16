@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Logo from "../components/Logo";
 
 export default function SignupPage() {
   const { signup } = useAuth();
@@ -35,10 +36,11 @@ export default function SignupPage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md animate-fade-in-up">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
-            <span className="text-white text-xl font-bold">✓</span>
-          </div>
+        <div className="flex flex-col items-center mb-8 gap-2">
+          <Logo size={52} />
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+            Todo <span className="text-indigo-600">Calendar</span>
+          </h1>
         </div>
 
         <div className="bg-white rounded-3xl shadow-xl shadow-gray-100 border border-gray-100 p-8">
