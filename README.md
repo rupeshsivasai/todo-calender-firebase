@@ -1,70 +1,137 @@
-# Getting Started with Create React App
+# Todo Calendar
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack productivity app that combines a **todo list** with a **calendar view** — built with React, Firebase, and Tailwind CSS.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- **Authentication** — Sign up and log in with email & password (Firebase Auth)
+- **Task Management** — Add, complete, and delete tasks with optional due dates
+- **Calendar View** — See all your scheduled tasks on an interactive monthly calendar
+- **Date Linking** — Click any calendar date to filter tasks and auto-fill the date input
+- **Filter Tabs** — View All, Active, or Completed tasks
+- **Progress Bar** — Visual completion tracker at the top of the task list
+- **Responsive** — Side-by-side on desktop, tabbed on mobile
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Stack
 
-### `npm test`
+| Layer | Technology |
+|---|---|
+| Frontend | React (Create React App) |
+| Styling | Tailwind CSS |
+| Auth | Firebase Authentication |
+| Database | Cloud Firestore |
+| Calendar | react-big-calendar |
+| Routing | React Router v7 |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 1. Clone and install
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+git clone <your-repo-url>
+cd todo-calender
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2. Configure Firebase
 
-### `npm run eject`
+#### Step 1 — Create a Firebase Project
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Go to [firebase.google.com](https://firebase.google.com) and click **Add project**
+2. Enter a project name (e.g. `todo-calender-react`)
+3. Disable Google Analytics if not needed → **Create project**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Step 2 — Register a Web App
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Inside your project, click the **`</>`** (Web) icon → give it a nickname → **Register app**.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Firebase gives you a config object — paste it into `src/firebase/config.js`:
 
-## Learn More
+```js
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "...",
+};
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### Step 3 — Enable Authentication
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**Authentication** → **Sign-in method** → Enable **Email/Password**  
+- First toggle → **ON**  
+- Second toggle (Email link / passwordless) → **OFF**
 
-### Code Splitting
+#### Step 4 — Create Firestore Database
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+**Firestore Database** → **Create database** → select **Test mode** → choose a region → **Done**
 
-### Analyzing the Bundle Size
+> The `todos` collection is auto-created the first time you add a task — no manual setup needed.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### Step 5 — Composite Index (required for Calendar)
 
-### Making a Progressive Web App
+The calendar query filters by `uid` AND `date != null`, which requires a Firestore composite index.  
+On first load, the **browser console** prints a direct link — click it and Firebase creates the index automatically (takes ~1 minute).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 3. Run the app
 
-### Advanced Configuration
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Open [http://localhost:3000](http://localhost:3000) in Chrome.
 
-### Deployment
+> **Note:** Use Chrome for development. Brave's shields block Firestore on localhost.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+src/
+├── firebase/
+│   └── config.js           # Firebase initialization
+├── context/
+│   └── AuthContext.js      # Auth state (login, signup, logout)
+├── components/
+│   ├── Layout/
+│   │   ├── Navbar.js       # Top navigation bar
+│   │   └── ProtectedRoute.js
+│   ├── Todo/
+│   │   └── TodoList.js     # Task list with filters and date linking
+│   └── Calendar/
+│       └── CalendarView.js # Monthly calendar synced with tasks
+├── pages/
+│   ├── LoginPage.js
+│   ├── SignupPage.js
+│   └── DashboardPage.js    # Main layout (desktop/mobile)
+└── App.js                  # Route definitions
+```
+
+---
+
+## Usage
+
+1. **Sign up** with your email and password
+2. **Add a task** — type a name, optionally pick a date, click `+ Add`
+3. **Click a calendar date** — the task list filters to that date and the date input auto-fills
+4. **Check off tasks** to mark them complete
+5. **"Show all"** in the task list banner to clear the date filter
+
+---
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm start` | Start development server |
+| `npm run build` | Production build |
+| `npm test` | Run tests |

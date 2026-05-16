@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,7 +11,73 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-up { animation: fadeInUp 0.35s ease both; }
+.animate-fade-in    { animation: fadeIn 0.3s ease both; }
+.animate-slide-in   { animation: slideIn 0.25s ease both; }
+
+/* react-big-calendar overrides */
+.rbc-calendar {
+  font-family: inherit;
+  font-size: 13px;
+}
+.rbc-header {
+  background: #f8f7ff;
+  color: #6366f1;
+  font-weight: 600;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e7ff;
+}
+.rbc-today {
+  background-color: #eef2ff !important;
+}
+.rbc-toolbar button {
+  color: #6366f1;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  font-size: 13px;
+  padding: 4px 12px;
+  transition: all 0.15s;
+}
+.rbc-toolbar button:hover,
+.rbc-toolbar button.rbc-active {
+  background-color: #6366f1 !important;
+  color: white !important;
+  border-color: #6366f1 !important;
+}
+.rbc-toolbar-label {
+  font-weight: 700;
+  color: #1e1b4b;
+  font-size: 15px;
+}
+.rbc-month-view,
+.rbc-time-view {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e0e7ff;
+}
+.rbc-off-range-bg {
+  background: #fafafa;
+}
+.rbc-date-cell {
+  font-size: 12px;
+  padding: 4px 6px;
+}
+.rbc-event {
+  border-radius: 6px !important;
+  font-size: 11px !important;
 }
