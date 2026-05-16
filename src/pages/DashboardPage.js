@@ -13,6 +13,8 @@ export default function DashboardPage() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  useEffect(() => { document.title = "Dashboard — Todo Calendar"; }, []);
+
   useEffect(() => {
     localStorage.setItem(`todos_${currentUser.uid}`, JSON.stringify(todos));
   }, [todos, currentUser.uid]);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Logo from "../components/Logo";
@@ -6,6 +6,7 @@ import Logo from "../components/Logo";
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  useEffect(() => { document.title = "Login — Todo Calendar"; }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
