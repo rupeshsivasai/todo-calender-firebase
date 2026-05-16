@@ -22,15 +22,10 @@ export default function SignupPage() {
       await signup(email, password);
       navigate("/");
     } catch (err) {
-      const code = err.code;
-      if (code === "auth/email-already-in-use") {
+      if (err.code === "auth/email-already-in-use") {
         setError("This email is already registered. Try signing in instead.");
-      } else if (code === "auth/operation-not-allowed") {
-        setError("Email/Password sign-in is not enabled in Firebase Console.");
-      } else if (code === "auth/invalid-email") {
-        setError("Invalid email address.");
       } else {
-        setError(err.message || "Failed to create account. Please try again.");
+        setError("Failed to create account. Please try again.");
       }
     }
     setLoading(false);

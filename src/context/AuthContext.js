@@ -1,41 +1,43 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from "firebase/auth";
-import { auth } from "../firebase/config";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export function useAuth() { return useContext(AuthContext); }
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("currentUser");
+    if (saved) setCurrentUser(JSON.parse(saved));
+    setLoading(false);
+  }, []);
+
   function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    if (users.find((u) => u.email === email)) {
+      throw { code: "auth/email-already-in-use" };
+    }
+    const user = { uid: Date.now().toString(), email };
+    users.push({ ...user, password });
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("currentUser", JSON.stringify(user));
+    setCurrentUser(user);
   }
 
   function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const found = users.find((u) => u.email === email && u.password === password);
+    if (!found) throw { code: "auth/invalid-credential" };
+    const { password: _, ...user } = found;
+    localStorage.setItem("currentUser", JSON.stringify(user));
+    setCurrentUser(user);
   }
 
   function logout() {
-    return signOut(auth);
+    localStorage.removeItem("currentUser");
+    setCurrentUser(null);
   }
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoading(false);
-    });
-    return unsubscribe;
-  }, []);
 
   return (
     <AuthContext.Provider value={{ currentUser, signup, login, logout }}>

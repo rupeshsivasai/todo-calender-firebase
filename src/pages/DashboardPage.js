@@ -1,15 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TodoList from "../components/Todo/TodoList";
 import CalendarView from "../components/Calendar/CalendarView";
 import Navbar from "../components/Layout/Navbar";
+import { useAuth } from "../context/AuthContext";
 
 export default function DashboardPage() {
+  const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState("todos");
   const [selectedDate, setSelectedDate] = useState(null);
+  const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem(`todos_${currentUser.uid}`);
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(`todos_${currentUser.uid}`, JSON.stringify(todos));
+  }, [todos, currentUser.uid]);
+
+  function addTodo(text, date) {
+    const newTodo = {
+      id: Date.now().toString(),
+      text,
+      date: date || null,
+      completed: false,
+      createdAt: Date.now(),
+    };
+    setTodos((prev) => [newTodo, ...prev]);
+  }
+
+  function toggleTodo(id) {
+    setTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+    );
+  }
+
+  function deleteTodo(id) {
+    setTodos((prev) => prev.filter((t) => t.id !== id));
+  }
 
   function handleDateSelect(date) {
     setSelectedDate(date);
-    setActiveTab("todos"); // switch to tasks tab on mobile
+    setActiveTab("todos");
   }
 
   return (
@@ -36,15 +67,39 @@ export default function DashboardPage() {
       {/* Desktop: side by side | Mobile: tabbed */}
       <div className="max-w-7xl mx-auto px-4 py-5 lg:py-8">
         <div className="hidden lg:grid lg:grid-cols-2 gap-6 items-start">
-          <TodoList selectedDate={selectedDate} onClearDate={() => setSelectedDate(null)} />
-          <CalendarView onDateSelect={handleDateSelect} selectedDate={selectedDate} />
+          <TodoList
+            todos={todos}
+            selectedDate={selectedDate}
+            onClearDate={() => setSelectedDate(null)}
+            onAdd={addTodo}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+          />
+          <CalendarView
+            todos={todos}
+            onDateSelect={handleDateSelect}
+            selectedDate={selectedDate}
+          />
         </div>
 
         {/* Mobile views */}
         <div className="lg:hidden mt-4">
-          {activeTab === "todos"
-            ? <TodoList selectedDate={selectedDate} onClearDate={() => setSelectedDate(null)} />
-            : <CalendarView onDateSelect={handleDateSelect} selectedDate={selectedDate} />}
+          {activeTab === "todos" ? (
+            <TodoList
+              todos={todos}
+              selectedDate={selectedDate}
+              onClearDate={() => setSelectedDate(null)}
+              onAdd={addTodo}
+              onToggle={toggleTodo}
+              onDelete={deleteTodo}
+            />
+          ) : (
+            <CalendarView
+              todos={todos}
+              onDateSelect={handleDateSelect}
+              selectedDate={selectedDate}
+            />
+          )}
         </div>
       </div>
     </div>

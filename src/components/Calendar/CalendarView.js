@@ -1,39 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebase/config";
-import { useAuth } from "../../context/AuthContext";
 
 const localizer = momentLocalizer(moment);
 
-export default function CalendarView({ onDateSelect, selectedDate }) {
-  const { currentUser } = useAuth();
-  const [events, setEvents] = useState([]);
+export default function CalendarView({ todos, onDateSelect, selectedDate }) {
   const [view, setView] = useState("month");
 
-  useEffect(() => {
-    const q = query(
-      collection(db, "todos"),
-      where("uid", "==", currentUser.uid),
-      where("date", "!=", null)
-    );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const mapped = snapshot.docs
-        .map((d) => d.data())
-        .filter((t) => t.date)
-        .map((t) => ({
-          title: t.text,
-          start: new Date(t.date),
-          end: new Date(t.date),
-          allDay: true,
-          completed: t.completed,
-        }));
-      setEvents(mapped);
-    });
-    return unsubscribe;
-  }, [currentUser]);
+  const events = todos
+    .filter((t) => t.date)
+    .map((t) => ({
+      title: t.text,
+      start: new Date(t.date),
+      end: new Date(t.date),
+      allDay: true,
+      completed: t.completed,
+    }));
 
   function eventStyle(event) {
     return {
