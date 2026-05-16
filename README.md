@@ -51,18 +51,18 @@ npm install
 
 Inside your project, click the **`</>`** (Web) icon → give it a nickname → **Register app**.
 
-Firebase gives you a config object — paste it into `src/firebase/config.js`:
+Firebase gives you a config object — copy the values into a `.env` file in the project root:
 
-```js
-const firebaseConfig = {
-  apiKey: "...",
-  authDomain: "...",
-  projectId: "...",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "...",
-};
+```env
+REACT_APP_FIREBASE_API_KEY=your_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
 ```
+
+> See `.env.example` for the template. The `.env` file is gitignored and never pushed to GitHub.
 
 #### Step 3 — Enable Authentication
 
@@ -72,9 +72,25 @@ const firebaseConfig = {
 
 #### Step 4 — Create Firestore Database
 
-**Firestore Database** → **Create database** → select **Test mode** → choose a region → **Done**
+**Firestore Database** → **Create database** → choose a region → **Done**
 
-> The `todos` collection is auto-created the first time you add a task — no manual setup needed.
+Then go to the **Rules** tab and replace the default rules with:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /todos/{todoId} {
+      allow read, update, delete: if request.auth != null
+        && request.auth.uid == resource.data.uid;
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.uid;
+    }
+  }
+}
+```
+
+Click **Publish**. The `todos` collection is auto-created on your first task — no manual setup needed.
 
 #### Step 5 — Composite Index (required for Calendar)
 
