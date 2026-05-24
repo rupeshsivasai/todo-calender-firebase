@@ -47,6 +47,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20">
+      <div className="w-full bg-amber-50 border-b border-amber-200 text-amber-800 text-xs font-medium text-center py-2 px-4">
+        ⚠️ This app is using <span className="font-bold">localStorage</span> — not Firebase database. Data is stored only in this browser.
+      </div>
       <Navbar />
 
       {/* Mobile tab switcher */}
